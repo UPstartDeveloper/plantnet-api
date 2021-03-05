@@ -1,39 +1,61 @@
-# Make a flask API for our DL Model
+# Serialize the Model's predictions into JSON
+import json
+# Prevent ImportError w/ flask
 import werkzeug
-# This next lime Prevents ImportErrors - flask-restplus currently gets broken by 
-# Werkzeug 1.0.0. Alternatively, you could also downgrade werkzeug 
-# (the package Python uses to interface with an HTTP web server)
-# Note: line 6 must happen BEFORE you import Flask to be able to work!
 werkzeug.cached_property = werkzeug.utils.cached_property
-
-import tensorflow as tf
-import tensorflow.keras as keras
-from keras.preprocessing.image import img_to_array
-from flask_restplus import Api, Resource, fields
-from flask import Flask, request, jsonify
-import numpy as np
 from werkzeug.datastructures import FileStorage
+# ML/Data processing
+import tensorflow as tf
+import tensorflow_addons as tfa
+import tensorflow.keras as keras
+import numpy as np
 from PIL import Image
+# RESTful API packages
+from flask_restplus import Api, Resource, fields
+from flask import Flask
 
 
 application = app = Flask(__name__)
-api = Api(app, version='1.0', title='MNIST Classification', description='CNN for Mnist')
-ns = api.namespace('Make_School', description='Methods')
+api = Api(app, version="1.0", title="PlantNet API", 
+        description="Inference on Leaf Images")
+ns = api.namespace("Diagnose Leaf Condition", 
+                    description="Works best on images of 1 leaf.")
 
-# use Flask-RESTPlus argparser to help make predictions on the input requests 
+# use Flask-RESTPlus argparser to help make predictions on the input requests
 arg_parser = api.parser()
-arg_parser.add_argument('image_location', required=True)
+arg_parser.add_argument('image', location='files',
+                           type=FileStorage, required=True)
 
 # Model reconstruction from Protocol Buffer format - do this only once!
-model = tf.keras.load_model('plantnet')
+model = tf.keras.models.load_model("plantnet")
 
-@ns.route('/prediction')
+
+@ns.route("/prediction")
 class CNNPrediction(Resource):
-    """Uploads your data to the CNN"""
-    @api.doc(parser=arg_parser, description='Tell me where your image is in S3')
+    """Takes in the image, to pass to the CNN"""
+    @api.doc(parser=arg_parser, description="Tell me where your image is in S3")
     def post(self):
-        pass
+        # A: get the image
+        args = arg_parser.parse_args()
+        image_file = args.image  # reading args from file
+        image = Image.open(image_file)  # open the image
+        # B: preprocess the image
+        tensor_image = keras.preprocessing.image.img_to_array(image)
+        resized_img = tf.image.resize(tensor_image, [256, 256])
+        final_image = tf.keras.applications.inception_v3.preprocess_input(resized_img)
+        # C: make a 4D tensor before we're ready to predict
+        final_input = np.expand_dims(final_image, axis=0)
+        # D: predict on the image data - use an outer list to make a 4D Tensor
+        prediction_probabilities = model(final_input, training=False)[0]
+        # E: convert the response from Tensor -> ndarray -> Python list -> JSON
+        prediction_probabilities = (
+            json.dumps(np.array(prediction_probabilities).tolist())
+        )
+        # return the classification
+        return {
+            "prediction": prediction_probabilities
+        }
 
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
