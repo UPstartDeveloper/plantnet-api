@@ -5,11 +5,11 @@ FROM python:3.8.8-slim-buster
 # Store it in a folder named /app.
 ADD . /app
 
-# STEP 3: Install required dependencies.
-RUN pip install -r requirements.txt
-
-# STEP 4: Set working directory to /app so we can execute commands in it
+# STEP 3: Set working directory to /app so we can execute commands in it
 WORKDIR /app
+
+# STEP 4: Install required dependencies.
+RUN pip install -r ./requirements.txt
 
 # STEP 5: Declare environment variables
 ENV FLASK_APP=application.py
