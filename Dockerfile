@@ -1,12 +1,12 @@
 # STEP 1: Install base image. Optimized for Python.
 FROM python:3.8.8-slim-buster
 
-# STEP 2: Install required dependencies.
-RUN pip install Flask
-
-# STEP 3: Copy the source code in the current directory to the container.
+# STEP 2: Copy the source code in the current directory to the container.
 # Store it in a folder named /app.
 ADD . /app
+
+# STEP 3: Install required dependencies.
+RUN pip install -r requirements.txt
 
 # STEP 4: Set working directory to /app so we can execute commands in it
 WORKDIR /app
