@@ -26,8 +26,10 @@ arg_parser = api.parser()
 arg_parser.add_argument('image', location='files',
                            type=FileStorage, required=True)
 
-# Model reconstruction from Protocol Buffer format - do this only once!
-model = tf.keras.models.load_model("plantnet")
+# Model reconstruction - using pretrained weights from Inception V3
+with open("./plantnet/inceptionModelArchitecture.json") as f:
+    model = keras.models.model_from_json(f.read())
+    model.load_weights("./plantnet/inception_model_weights.h5")
 
 
 @ns.route("/prediction")
