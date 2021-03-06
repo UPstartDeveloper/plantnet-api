@@ -17,7 +17,7 @@ If you wish to access the weights and biases of the CNN used in production, you 
 
 ## Deployment Guide: Heroku
 
-This repository contains large files, so you might be inclined to use Git LFS. That's okay, however we need to keep in mind that this causes errors on Heroku (which won't be linked to the files tracked by Git LFS on default). To remedy this situation, please be sure to follow the instructions found [on this blog post](https://ankane.org/git-lfs-on-heroku) by Andrew Kane, which is a great guide. I would only make one small change to the directions Kane's blog, under the "Authentication" header. Instead of using the provided command to generate your SSH keys, use  this to give you more control over where the keys end up:
+This repository contains large files, so you might be inclined to use Git LFS. That's okay, however we need to keep in mind that this causes errors on Heroku (which doesn't have Git LFS installed by default). To remedy this situation, please be sure to follow the instructions found [on this blog post](https://ankane.org/git-lfs-on-heroku) by Andrew Kane, which is a great guide. I would only make one small change to the directions Kane's blog, under the "Authentication" header. Instead of using the provided command to generate your SSH keys, use  this to give you more control over where the keys end up:
 
 ```
  ssh-keygen -C "<USERNAME>@<REPO_NAME>" -t rsa

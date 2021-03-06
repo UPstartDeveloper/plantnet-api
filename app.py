@@ -18,7 +18,7 @@ from flask import Flask
 application = app = Flask(__name__)
 api = Api(app, version="1.0", title="PlantNet API", 
         description="Inference on Leaf Images")
-ns = api.namespace("Diagnose Leaf Condition", 
+ns = api.namespace("Diagnosis", 
                     description="Works best on images of 1 leaf.")
 
 # use Flask-RESTPlus argparser to help make predictions on the input requests
