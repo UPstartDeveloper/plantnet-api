@@ -1,2 +1,0 @@
-plantnet/* filter=lfs diff=lfs merge=lfs -text
-plantnet/variables/ filter=lfs diff=lfs merge=lfs -text
