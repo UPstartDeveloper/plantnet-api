@@ -6,12 +6,11 @@ werkzeug.cached_property = werkzeug.utils.cached_property
 from werkzeug.datastructures import FileStorage
 # ML/Data processing
 import tensorflow as tf
-import tensorflow_addons as tfa
 import tensorflow.keras as keras
 import numpy as np
 from PIL import Image
 # RESTful API packages
-from flask_restplus import Api, Resource, fields
+from flask_restplus import Api, Resource
 from flask import Flask
 
 
@@ -35,7 +34,7 @@ with open("./plantnet/inceptionModelArchitecture.json") as f:
 @ns.route("/prediction")
 class CNNPrediction(Resource):
     """Takes in the image, to pass to the CNN"""
-    @api.doc(parser=arg_parser, description="Tell me where your image is in S3")
+    @api.doc(parser=arg_parser, description="Upload your leaf image")
     def post(self):
         # A: get the image
         args = arg_parser.parse_args()
