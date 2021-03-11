@@ -12,20 +12,23 @@ from PIL import Image
 # RESTful API packages
 from flask_restplus import Api, Resource
 from flask import Flask
-
+# Utility Functions
+from util import leaf
 
 application = app = Flask(__name__)
 api = Api(app, version="1.0", title="PlantNet API", 
-        description="Inference on Leaf Images")
-ns = api.namespace("Diagnosis", 
-                    description="Works best on images of 1 leaf.")
+        description="Identifying Leaf Disease via Deep Learning")
+ns = api.namespace(
+    "Diagnosis", 
+    description="Represents the health states of a leaf understood by the AI."
+)
 
 # use Flask-RESTPlus argparser to help make predictions on the input requests
 arg_parser = api.parser()
 arg_parser.add_argument('image', location='files',
                            type=FileStorage, required=True)
 
-# Model reconstruction - using pretrained weights from Inception V3
+# Model reconstruction - using retrained weights from Inception V3
 with open("./plantnet/inceptionModelArchitecture.json") as f:
     model = keras.models.model_from_json(f.read())
     model.load_weights("./plantnet/inception_model_weights.h5")
@@ -34,7 +37,8 @@ with open("./plantnet/inceptionModelArchitecture.json") as f:
 @ns.route("/prediction")
 class CNNPrediction(Resource):
     """Takes in the image, to pass to the CNN"""
-    @api.doc(parser=arg_parser, description="Upload your leaf image")
+    @api.doc(parser=arg_parser, 
+             description="Let the AI predict if a leaf is healthy.")
     def post(self):
         # A: get the image
         args = arg_parser.parse_args()
