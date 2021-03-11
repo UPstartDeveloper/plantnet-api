@@ -1,14 +1,10 @@
-# Serialize the Model's predictions into JSON
-import json
 # Prevent ImportError w/ flask
 import werkzeug
 werkzeug.cached_property = werkzeug.utils.cached_property
 from werkzeug.datastructures import FileStorage
 # ML/Data processing
-import tensorflow as tf
 import tensorflow.keras as keras
 import numpy as np
-from PIL import Image
 # RESTful API packages
 from flask_restplus import Api, Resource
 from flask import Flask
@@ -41,25 +37,13 @@ class CNNPrediction(Resource):
              description="Let the AI predict if a leaf is healthy.")
     def post(self):
         # A: get the image
-        args = arg_parser.parse_args()
-        image_file = args.image  # reading args from file
-        image = Image.open(image_file)  # open the image
+        image = leaf.get_image(arg_parser)
         # B: preprocess the image
-        tensor_image = keras.preprocessing.image.img_to_array(image)
-        resized_img = tf.image.resize(tensor_image, [256, 256])
-        final_image = tf.keras.applications.inception_v3.preprocess_input(resized_img)
-        # C: make a 4D tensor before we're ready to predict
-        final_input = np.expand_dims(final_image, axis=0)
-        # D: predict on the image data - use an outer list to make a 4D Tensor
-        prediction_probabilities = model(final_input, training=False)[0]
-        # E: convert the response from Tensor -> ndarray -> Python list -> JSON
-        prediction_probabilities = (
-            json.dumps(np.array(prediction_probabilities).tolist())
-        )
+        final_image = leaf.preprocess_image(image)
+        # C: make the prediction
+        prediction = leaf.predict_leaf_health(model, final_image)
         # return the classification
-        return {
-            "prediction": prediction_probabilities
-        }
+        return prediction
 
 
 if __name__ == "__main__":
