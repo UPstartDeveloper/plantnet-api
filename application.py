@@ -4,7 +4,6 @@ werkzeug.cached_property = werkzeug.utils.cached_property
 from werkzeug.datastructures import FileStorage
 # ML/Data processing
 import tensorflow.keras as keras
-import numpy as np
 # RESTful API packages
 from flask_restplus import Api, Resource
 from flask import Flask
@@ -19,7 +18,7 @@ ns = api.namespace(
     description="Represents the health states of a leaf understood by the AI."
 )
 
-# use Flask-RESTPlus argparser to help make predictions on the input requests
+# Use Flask-RESTPlus argparser to process user-uploaded images
 arg_parser = api.parser()
 arg_parser.add_argument('image', location='files',
                            type=FileStorage, required=True)
@@ -30,6 +29,7 @@ with open("./plantnet/inceptionModelArchitecture.json") as f:
     model.load_weights("./plantnet/inception_model_weights.h5")
 
 
+# Add the route to run inference
 @ns.route("/prediction")
 class CNNPrediction(Resource):
     """Takes in the image, to pass to the CNN"""
