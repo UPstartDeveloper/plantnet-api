@@ -24,6 +24,6 @@ TBD
 
 ## Background
 
-*PlantNet*: the convolutional neural network for this API was developed using transfer learning. The full implementation and training is available [in this Jupyter notebook](https://github.com/UPstartDeveloper/DS-2.4-Advanced-Topics/blob/main/Notebooks/Computer_Vision/Plant_Vision.ipynb).
+*PlantNet*: the convolutional neural network for this API was developed using transfer learning. The full implementation and training is available [in this Jupyter notebook](https://github.com/UPstartDeveloper/DS-2.4-Advanced-Topics/blob/main/Notebooks/Computer_Vision/Plant_Vision.ipynb). This model was trained on the ["New Plant Diseases Dataset"](https://www.kaggle.com/vipoooool/new-plant-diseases-dataset), which was uploaded by [Samir Bhattarai](https://www.kaggle.com/vipoooool) on Kaggle.
 
 If you wish to access the weights and biases of the CNN used in production, you can download them in the [`/plantnet` directory](https://github.com/UPstartDeveloper/plantnet-api/tree/main/plantnet) of this repository.
